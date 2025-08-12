@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazing Sentence Builder</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Thay đổi chiều cao để cho phép cuộn */
+            min-height: 100vh; 
+            margin: 0;
+            background-color: #f4f4f9;
+            /* Thêm overflow-y: auto để cho phép cuộn dọc */
+            overflow-y: auto; 
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 50px auto; /* Điều chỉnh margin để căn giữa và có khoảng trống */
+            width: 90%;
+            max-width: 600px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"], select {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result-sentence {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Amazing Sentence Builder</h1>
+    <p>Build a sentence by selecting words and grammatical rules.</p>
+
+    <div class="input-group">
+        <label for="article1">Article for Noun 1:</label>
+        <br>
+        <select id="article1">
+            <option value="the">the</option>
+            <option value="a">a</option>
+            <option value="an">an</option>
+            <option value="none">none</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="noun1">Noun 1:</label>
+        <br>
+        <input type="text" id="noun1" placeholder="e.g., Peter">
+    </div>
+
+    <div class="input-group">
+        <label for="noun-number1">Noun 1 Number:</label>
+        <br>
+        <select id="noun-number1">
+            <option value="singular">Singular</option>
+            <option value="plural">Plural</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="verb-tense">Verb Tense:</label>
+        <br>
+        <select id="verb-tense">
+            <option value="present_simple">Present Simple</option>
+            <option value="present_continuous">Present Continuous</option>
+            <option value="past_simple">Past Simple</option>
+            <option value="past_continuous">Past Continuous</option>
+            <option value="present_perfect">Present Perfect</option>
+            <option value="present_perfect_continuous">Present Perfect Continuous</option>
+            <option value="past_perfect">Past Perfect</option>
+            <option value="past_perfect_continuous">Past Perfect Continuous</option>
+            <option value="future_simple">Future Simple</option>
+            <option value="future_continuous">Future Continuous</option>
+            <option value="future_perfect">Future Perfect</option>
+            <option value="future_perfect_continuous">Future Perfect Continuous</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="verb">Verb:</label>
+        <br>
+        <input type="text" id="verb" placeholder="e.g., take">
+    </div>
+
+    <div class="input-group">
+        <label for="adjective">Adjective:</label>
+        <br>
+        <input type="text" id="adjective" placeholder="e.g., quiet">
+    </div>
+
+    <div class="input-group">
+        <label for="adjective-position">Adjective Position:</label>
+        <br>
+        <select id="adjective-position">
+            <option value="before_noun1">Before Noun 1</option>
+            <option value="before_noun2">Before Noun 2</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="adverb">Adverb (optional):</label>
+        <br>
+        <input type="text" id="adverb" placeholder="e.g., surprisingly">
+    </div>
+
+    <div class="input-group">
+        <label for="adverb-position">Adverb Position (optional):</label>
+        <br>
+        <select id="adverb-position">
+            <option value="beginning">At the beginning of the sentence</option>
+            <option value="before_adjective">Before adjective</option>
+            <option value="before_verb">Before verb</option>
+            <option value="middle_of_verb">Middle of verb (e.g., will effectively get)</option>
+            <option value="after_verb">After verb</option>
+            <option value="after_noun2">After noun 2</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="noun2">Noun 2 (optional):</label>
+        <br>
+        <input type="text" id="noun2" placeholder="e.g., dog">
+    </div>
+
+    <div class="input-group">
+        <label for="article2">Article for Noun 2 (optional):</label>
+        <br>
+        <select id="article2">
+            <option value="the">the</option>
+            <option value="a">a</option>
+            <option value="an">an</option>
+            <option value="none">none</option>
+        </select>
+    </div>
+
+    <button onclick="buildSentence()">Build Sentence</button>
+
+    <div id="result-sentence"></div>
+</div>
+
+<script>
+    // Mảng và đối tượng đã có
+    const endings = [
+        "for a walk.",
+        "in the park.",
+        "on the road.",
+        "on the tree.",
+        "with great enthusiasm.",
+        "for my father."
+    ];
+    const irregularVerbs = {
+        "take": { "past_simple": "took", "past_participle": "taken" },
+        "get": { "past_simple": "got", "past_participle": "gotten" },
+        "sit": { "past_simple": "sat", "past_participle": "sat" },
+        "cry": { "past_simple": "cried", "past_participle": "cried" },
+        "eat": { "past_simple": "ate", "past_participle": "eaten" },
+        "protect": { "past_simple": "protected", "past_participle": "protected" }
+    };
+
+    function getRandomEnding() {
+        const randomIndex = Math.floor(Math.random() * endings.length);
+        return endings[randomIndex];
+    }
+    
+    function conjugateVerb(baseVerb, tense, nounNumber) {
+        const verbData = irregularVerbs[baseVerb.toLowerCase()];
+        
+        switch (tense) {
+            case 'present_simple':
+                if (nounNumber === 'singular') {
+                    if (baseVerb.endsWith('s') || baseVerb.endsWith('sh') || baseVerb.endsWith('ch') || baseVerb.endsWith('x') || baseVerb.endsWith('z') || baseVerb.endsWith('o')) {
+                         return baseVerb + 'es';
+                    }
+                    if (baseVerb.endsWith('y') && !['a', 'e', 'i', 'o', 'u'].includes(baseVerb[baseVerb.length - 2])) {
+                        return baseVerb.slice(0, -1) + 'ies';
+                    }
+                    return baseVerb + 's';
+                }
+                return baseVerb;
+                
+            case 'present_continuous':
+                if (nounNumber === 'singular') {
+                    return `is ${baseVerb}ing`;
+                }
+                return `are ${baseVerb}ing`;
+
+            case 'past_simple':
+                if (verbData && verbData.past_simple) {
+                    return verbData.past_simple;
+                }
+                if (baseVerb.endsWith('e')) {
+                    return baseVerb + 'd';
+                } else if (baseVerb.endsWith('y') && !['a', 'e', 'i', 'o', 'u'].includes(baseVerb[baseVerb.length - 2])) {
+                    return baseVerb.slice(0, -1) + 'ied';
+                }
+                return baseVerb + 'ed';
+            
+            case 'past_continuous':
+                if (nounNumber === 'singular') {
+                    return `was ${baseVerb}ing`;
+                }
+                return `were ${baseVerb}ing`;
+
+            case 'present_perfect':
+                const pp = (verbData && verbData.past_participle) ? verbData.past_participle : (baseVerb + 'ed');
+                if (nounNumber === 'singular') {
+                    return `has ${pp}`;
+                }
+                return `have ${pp}`;
+
+            case 'present_perfect_continuous':
+                if (nounNumber === 'singular') {
+                    return `has been ${baseVerb}ing`;
+                }
+                return `have been ${baseVerb}ing`;
+            
+            case 'past_perfect':
+                const pp_past = (verbData && verbData.past_participle) ? verbData.past_participle : (baseVerb + 'ed');
+                return `had ${pp_past}`;
+                
+            case 'past_perfect_continuous':
+                return `had been ${baseVerb}ing`;
+
+            case 'future_simple':
+                return `will ${baseVerb}`;
+
+            case 'future_continuous':
+                return `will be ${baseVerb}ing`;
+
+            case 'future_perfect':
+                const pp_future = (verbData && verbData.past_participle) ? verbData.past_participle : (baseVerb + 'ed');
+                return `will have ${pp_future}`;
+
+            case 'future_perfect_continuous':
+                return `will have been ${baseVerb}ing`;
+
+            default:
+                return baseVerb;
+        }
+    }
+
+    function buildSentence() {
+        const noun1 = document.getElementById('noun1').value.trim();
+        const article1 = document.getElementById('article1').value;
+        const nounNumber1 = document.getElementById('noun-number1').value;
+        const noun2 = document.getElementById('noun2').value.trim();
+        const article2 = document.getElementById('article2').value;
+        const verb = document.getElementById('verb').value.trim();
+        const verbTense = document.getElementById('verb-tense').value;
+        const adjective = document.getElementById('adjective').value.trim();
+        const adjPosition = document.getElementById('adjective-position').value;
+        const adverb = document.getElementById('adverb').value.trim();
+        const advPosition = document.getElementById('adverb-position').value;
+        let conjugatedVerb = conjugateVerb(verb, verbTense, nounNumber1);
+        
+        if (!noun1 || !verb || !adjective) {
+            document.getElementById('result-sentence').innerText = 'Please fill in at least Noun 1, Verb, and Adjective!';
+            return;
+        }
+
+        // Handle adjective position
+        let finalNoun1 = noun1;
+        let finalNoun2 = noun2;
+        
+        if (adjPosition === 'before_noun1') {
+            finalNoun1 = `${adjective} ${noun1}`;
+        } else if (adjPosition === 'before_noun2' && noun2) {
+            finalNoun2 = `${adjective} ${noun2}`;
+        }
+        
+        // Handle adverb position
+        let adverbAtBeginning = '';
+        let adverbBeforeAdj = '';
+        let adverbBeforeVerb = '';
+        let adverbMiddleVerb = '';
+        let adverbAfterVerb = '';
+        let adverbAfterNoun2 = '';
+
+        if (adverb) {
+            switch (advPosition) {
+                case 'beginning':
+                    adverbAtBeginning = `${adverb.charAt(0).toUpperCase() + adverb.slice(1)}, `;
+                    break;
+                case 'before_adjective':
+                    adverbBeforeAdj = `${adverb} `;
+                    finalNoun1 = (adjPosition === 'before_noun1') ? `${adverbBeforeAdj}${finalNoun1}` : finalNoun1;
+                    finalNoun2 = (adjPosition === 'before_noun2' && noun2) ? `${adverbBeforeAdj}${finalNoun2}` : finalNoun2;
+                    break;
+                case 'before_verb':
+                    adverbBeforeVerb = `${adverb} `;
+                    break;
+                case 'middle_of_verb':
+                    const verbParts = conjugatedVerb.split(' ');
+                    if (verbParts.length > 1) {
+                         verbParts.splice(1, 0, adverb);
+                         conjugatedVerb = verbParts.join(' ');
+                    } else {
+                        adverbBeforeVerb = `${adverb} `;
+                    }
+                    break;
+                case 'after_verb':
+                    adverbAfterVerb = ` ${adverb}`;
+                    break;
+                case 'after_noun2':
+                    adverbAfterNoun2 = ` ${adverb}`;
+                    break;
+            }
+        }
+        
+        // Construct the parts of the sentence
+        const noun1Part = (article1 === 'none' ? finalNoun1 : `${article1} ${finalNoun1}`);
+        const noun2Part = (noun2) ? (article2 === 'none' ? finalNoun2 : `${article2} ${finalNoun2}`) : getRandomEnding().slice(0, -1);
+        
+        // Final sentence
+        let sentence = `${adverbAtBeginning}${noun1Part} ${adverbBeforeVerb}${conjugatedVerb}${adverbAfterVerb} ${noun2Part}${adverbAfterNoun2}.`;
+        
+        // Capitalize the first letter of the sentence
+        sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+        
+        document.getElementById('result-sentence').innerText = sentence;
+    }
+</script>
+
+</body>
+</html>
